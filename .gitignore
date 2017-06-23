@@ -20,6 +20,7 @@ ExportedObj/
 /Library/
 */Library/
 */Temp/
+*/Assets/models/*
 # Unity3D generated meta files
 *.pidb.meta
 
