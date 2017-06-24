@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Rigidbody), typeof(PlayerController))]
 public class PlayerMove : MonoBehaviour
 {
 
     PlayerController controller;
-    float secondsLeft;
     bool isJumping = false;
     // Use this for initialization
     void Start()
@@ -28,12 +27,51 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButton("Forward"))
         {
             controller.IsMoving = true;
-            GetComponent<Rigidbody>().AddForce(controller.speed * transform.forward, ForceMode.Acceleration);
+            GetComponent<Rigidbody>().AddForce(controller.speed * transform.forward, ForceMode.VelocityChange);
 
         }
+        else if (Input.GetButton("Backward"))
+        {
+            controller.IsMoving = true;
+            GetComponent<Rigidbody>().AddForce(controller.speed * transform.forward * (-1f), ForceMode.VelocityChange);
+        }
+      /*  else
+        {
+            controller.IsMoving = false;
+            Vector3 vel = GetComponent<Rigidbody>().velocity;
+            vel = new Vector3(0, vel.y, 0);
+            GetComponent<Rigidbody>().velocity = vel;
+        }*/
+
+        if (Input.GetButton("Right"))
+        {
+            controller.IsMoving = true;
+            GetComponent<Rigidbody>().AddForce(controller.speed * transform.right, ForceMode.VelocityChange);
+        }
+        else if (Input.GetButton("Left"))
+        {
+            controller.IsMoving = true;
+            GetComponent<Rigidbody>().AddForce(controller.speed * transform.right * (-1f), ForceMode.VelocityChange);
+        }/*
+        else
+        {
+            controller.IsMoving = false;
+            Vector3 vel = GetComponent<Rigidbody>().velocity;
+            vel = new Vector3(0, vel.y, 0);
+            GetComponent<Rigidbody>().velocity = vel;
+        }*/
+
+        // Apply correct maxSpeed
+        Vector3 v = GetComponent<Rigidbody>().velocity;
+        GetComponent<Rigidbody>().velocity = new Vector3(Vector3.ClampMagnitude(v, controller.maxSpeed).x, v.y, Vector3.ClampMagnitude(v, controller.maxSpeed).z);
+
+
+
+
         /*
          * Cette partie bug car le GetButtonDown est bloquant et ducoup l'objet redescent par a coups lors des sauts (atterissage)
          * De meme lorsque que je faisais : bool isMovingForward = Input.GetAxis("Vertical") > 0;
+         * De plus , dans le else, le fait de mettre la vélocité à 0 annule la vitesse de chute
          * 
         if (Input.GetButtonDown("Forward"))
         {

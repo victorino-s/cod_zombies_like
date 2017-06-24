@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(PlayerMove))]
 public class PlayerController : MonoBehaviour {
 
     PlayerLook _lookComponent;
@@ -12,12 +12,10 @@ public class PlayerController : MonoBehaviour {
     bool isMoving = false;
 
     public float speed;
+    public float maxSpeed;
     public float sensitivity;
     public float viewRange;
     public float jumpForce;
-
-    public bool useCustomGravity;
-    public float customGravity;
     public bool IsGrounded
     {
         get { return isGrounded; }
@@ -35,6 +33,7 @@ public class PlayerController : MonoBehaviour {
         _moveComponent = GetComponent<PlayerMove>();
 
         speed = speed > 0 ? speed : 5f;
+        maxSpeed = maxSpeed > 0 ? maxSpeed : 5f;
         sensitivity = sensitivity > 0 ? sensitivity : 3f;
         viewRange = viewRange > 0 ? viewRange : 60f;
         jumpForce = jumpForce > 0 ? jumpForce : 6f;
