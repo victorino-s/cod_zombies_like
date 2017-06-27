@@ -1,15 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class WeaponManager : MonoBehaviour
+public class WeaponManager : NetworkBehaviour
 {
     public GameObject defaultWeaponPrefab;
 
     public Weapon armePrincipale;
     public Weapon armeSecondaire;
 
+
     public Transform weaponHandler;
+    public LayerMask mask;
+
+    public float switchWeaponDelay;
+    float lastTimeSwitch = 0f;
+    float lastFireTime = 0f;
+    
+
+    Camera cam;
+    
+
     // Use this for initialization
     void Start()
     {
@@ -23,15 +35,64 @@ public class WeaponManager : MonoBehaviour
             armePrincipale = defaultWeapon.GetComponent<Weapon>();
             // Init ath
         }
+        switchWeaponDelay = switchWeaponDelay > 0 ? switchWeaponDelay : .3f;
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("Switch"))
+        if (Input.GetAxis("Switch") != 0f)
         {
-            SwitchArme();
+            if(Time.time > (lastTimeSwitch + switchWeaponDelay))
+            {
+                SwitchArme();
+                lastTimeSwitch = Time.time;
+            }
+            
         }
+    }
+
+    void LateUpdate()
+    {
+        if (Input.GetButton("Fire1"))
+        {
+            if (Time.time > (lastFireTime + armePrincipale.fireRate))
+            {
+                PlayWeaponFX();
+                Shoot();
+                lastFireTime = Time.time;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Plays player's primary weapon's muzzle flash + sounds
+    /// </summary>
+    void PlayWeaponFX()
+    {
+        armePrincipale.ActivateMuzzleFlash();
+        armePrincipale.WeaponAudio.PlayOneShot(armePrincipale.WeaponAudio.clip);
+        
+    }
+
+    void Shoot()
+    {
+        if(cam == null)
+        {
+            cam = GetComponent<PlayerController>().playerCamera;
+        }
+
+        if(cam != null)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, armePrincipale.range, mask))
+            {
+                Debug.Log("Object hit : " + hit.collider.name);
+            }
+        }
+        
     }
 
     public void RamasserArme(GameObject newArme)
@@ -64,11 +125,6 @@ public class WeaponManager : MonoBehaviour
             armePrincipale.gameObject.SetActive(true);
         }
         
-    }
-
-    public void Tirer()
-    {
-
     }
 
     public void Recharger()

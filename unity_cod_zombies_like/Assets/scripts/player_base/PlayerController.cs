@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
     PlayerLook _lookComponent;
     PlayerMove _moveComponent;
 
+    public Camera playerCamera;
     public bool isGrounded = true;
     bool isMoving = false;
 

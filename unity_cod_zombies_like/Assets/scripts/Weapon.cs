@@ -8,6 +8,7 @@ public class Weapon : MonoBehaviour
     public int damages;
     public int magazineCapacity;
     public int ammo;
+    public float range;
     public float fireRate;
     public float muzzleFlashDelay;
     public AudioClip fireSound;
@@ -17,6 +18,11 @@ public class Weapon : MonoBehaviour
     Light muzzleLight;
 
     float lastFireTime = 0f;
+
+    public AudioSource WeaponAudio
+    {
+        get { return soundPlayer; }
+    }
 
     // Use this for initialization
     void Start()
@@ -44,7 +50,7 @@ public class Weapon : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-
+        /*
         if (Input.GetButton("Fire1"))
         {
             if (Time.time > (lastFireTime + fireRate))
@@ -54,17 +60,17 @@ public class Weapon : MonoBehaviour
                 lastFireTime = Time.time;
             }
         } 
-
+        */
     }
 
-    void ActivateMuzzleFlash()
+    public void ActivateMuzzleFlash()
     {
         muzzleFlash.enabled = true;
         muzzleLight.enabled = true;
         Invoke("DeactivateMuzzleFlash", muzzleFlashDelay);
     }
 
-    void DeactivateMuzzleFlash()
+    public void DeactivateMuzzleFlash()
     {
         muzzleFlash.enabled = false;
         muzzleLight.enabled = false;

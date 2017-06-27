@@ -29,5 +29,6 @@ public class PlayerLook : MonoBehaviour {
     public void Initialize(PlayerController controller) 
     {
         this.controller = controller;
+        controller.playerCamera = GetComponent<Camera>();
     }
 }
