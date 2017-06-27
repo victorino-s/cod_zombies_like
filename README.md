@@ -21,4 +21,8 @@ Or, you can download each folder individually and extract files following the st
 			/textures
 ```
 
+**If you're downloading the project for the first time, please clone the project first, then add Mega's assets to your project, finally you can open it in Unity.**
+
+Opening the project in Unity before adding the assets may produce errors.
+
 Only files with huge size will need to be downloaded apart from GitHub.
