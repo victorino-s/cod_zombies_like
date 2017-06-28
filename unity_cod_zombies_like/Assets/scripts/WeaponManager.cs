@@ -99,6 +99,11 @@ public class WeaponManager : NetworkBehaviour
                 {
                     hit.transform.GetComponent<Hit>().DestroyIt();
                 }
+
+                if(hit.collider.name == "zombie_head")
+                {
+                    hit.transform.GetComponent<ZombieHealth>().GetHitted(armePrincipale.damages * Mathf.PI);
+                }
             }
         }
         
