@@ -90,6 +90,15 @@ public class WeaponManager : NetworkBehaviour
             if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, armePrincipale.range, mask))
             {
                 Debug.Log("Object hit : " + hit.collider.name);
+
+                if (hit.collider.tag == "Zombie")
+                {
+                    hit.transform.GetComponent<ZombieHealth>().GetHitted(armePrincipale.damages);
+                }
+                else if (hit.collider.tag == "DestructibleCrate")
+                {
+                    hit.transform.GetComponent<Hit>().DestroyIt();
+                }
             }
         }
         
