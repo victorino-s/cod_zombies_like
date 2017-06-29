@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Zombie : MonoBehaviour {
+public class Zombie : MonoBehaviour
+{
 
     public float attackDelay;
     public bool presenceInAttackZone = false;
@@ -12,8 +13,10 @@ public class Zombie : MonoBehaviour {
     NavMeshAgent agent;
     bool initialized = false;
     float lastCheckedDistance = 0f;
-	// Use this for initialization
-	void Start () {
+    bool isAttacking = false;
+    // Use this for initialization
+    void Start()
+    {
         attackDelay = attackDelay > 0f ? attackDelay : .8f;
 
         agent = GetComponent<NavMeshAgent>();
@@ -22,28 +25,55 @@ public class Zombie : MonoBehaviour {
 
         agent.SetDestination(ChooseRandomPlayer().transform.position - (transform.forward * GetComponent<CapsuleCollider>().radius));
         lastCheckedDistance = Vector3.Distance(transform.position, agent.destination);
-	}
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-		if(presenceInAttackZone && (Time.time > lastAttackTime + attackDelay))
+
+    }
+    public IEnumerator PlayAttack()
+    {
+        GetComponent<Animator>().SetBool("IsAttacking", true);
+        yield return null;
+        GetComponent<Animator>().SetBool("IsAttacking", false);
+        isAttacking = false;
+    }
+
+    public IEnumerator PlayOneShot(string paramName)
+    {
+        GetComponent<Animator>().SetBool(paramName, true);
+        yield return null;
+        GetComponent<Animator>().SetBool(paramName, false);
+    }
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        if (presenceInAttackZone && (Time.time > lastAttackTime + attackDelay) && !isAttacking)
         {
+            isAttacking = true;
             Debug.Log("Attack");
-            GetComponent<Animator>().SetTrigger("AttackTrigger");
+            StartCoroutine(PlayAttack());
+
+            
         }
 
-        
-            if (presenceInAttackZone)
-            {
-                agent.destination = transform.position;
-            }
-            else if ((lastCheckedDistance - Vector3.Distance(transform.position, agent.destination)) < (lastCheckedDistance / 2f))
-            {
-                RecalculatePath();
-            }
-        
-        
-	}
+
+        if (presenceInAttackZone)
+        {
+            agent.destination = transform.position;
+
+                GetComponent<Animator>().SetTrigger("IdleTrigger");
+        }
+        else if ((lastCheckedDistance - Vector3.Distance(transform.position, agent.destination)) < (lastCheckedDistance / 2f))
+        {
+            RecalculatePath();
+        }
+
+    }
+    
+    void LateUpdate()
+    {
+        if(agent.velocity != Vector3.zero)
+        {
+            GetComponent<Animator>().SetTrigger("WalkTrigger");
+        }
+    }
 
     void RecalculatePath()
     {
@@ -53,8 +83,8 @@ public class Zombie : MonoBehaviour {
     GameObject ChooseRandomPlayer()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        
-        if(players.Length == 1)
+
+        if (players.Length == 1)
         {
             return players[0];
         }
@@ -64,5 +94,5 @@ public class Zombie : MonoBehaviour {
         return players[elu];
     }
 
-    
+
 }

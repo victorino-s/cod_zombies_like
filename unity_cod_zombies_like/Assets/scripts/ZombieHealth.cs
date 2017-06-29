@@ -38,24 +38,27 @@ public class ZombieHealth : MonoBehaviour {
                     
             }
         }
+
+        
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		
 	}
 
     public void GetHitted(float damage)
     {
         life -= damage;
-        
+
+        healthBar.value = life;
+
         if (life <= 0f)
         {
+            healthBar.value = 0;
             Die();
-        } else
-        {
-            healthBar.value = life;
         }
+            
     }
 
     public void Die()

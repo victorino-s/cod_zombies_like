@@ -4,6 +4,8 @@
 *.sln
 *.csproj
 *.meta
+!spec/*.meta
+
 sysinfo.txt
 */sysinfo.txt
 
