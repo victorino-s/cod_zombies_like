@@ -25,14 +25,7 @@ public class Zombie : MonoBehaviour
 
         agent.SetDestination(ChooseRandomPlayer().transform.position - (transform.forward * GetComponent<CapsuleCollider>().radius));
         lastCheckedDistance = Vector3.Distance(transform.position, agent.destination);
-
-    }
-    public IEnumerator PlayAttack()
-    {
-        GetComponent<Animator>().SetBool("IsAttacking", true);
-        yield return null;
-        GetComponent<Animator>().SetBool("IsAttacking", false);
-        isAttacking = false;
+      //  GetComponent<Animator>().SetTrigger("WalkTrigger");
     }
 
     public IEnumerator PlayOneShot(string paramName)
@@ -47,10 +40,15 @@ public class Zombie : MonoBehaviour
         if (presenceInAttackZone && (Time.time > lastAttackTime + attackDelay) && !isAttacking)
         {
             isAttacking = true;
-            Debug.Log("Attack");
-            StartCoroutine(PlayAttack());
-
             
+            GetComponent<Animator>().SetTrigger("AttackTrigger");
+            GetComponent<Animator>().SetBool("IsAttacking", true);
+            Invoke("ResetAttack", GetComponent<Animator>().GetCurrentAnimatorClipInfo(0)[0].clip.length);
+            Debug.Log("Attack");
+            // Invoke("ResetAttack", )
+            //StartCoroutine(PlayAttack());
+
+
         }
 
 
@@ -58,7 +56,7 @@ public class Zombie : MonoBehaviour
         {
             agent.destination = transform.position;
 
-                GetComponent<Animator>().SetTrigger("IdleTrigger");
+               // GetComponent<Animator>().SetTrigger("IdleTrigger");
         }
         else if ((lastCheckedDistance - Vector3.Distance(transform.position, agent.destination)) < (lastCheckedDistance / 2f))
         {
@@ -66,13 +64,27 @@ public class Zombie : MonoBehaviour
         }
 
     }
+
+    public void ResetAttack()
+    {
+        GetComponent<Animator>().SetBool("IsAttacking", false);
+        isAttacking = false;
+    }
     
     void LateUpdate()
     {
         if(agent.velocity != Vector3.zero)
         {
-            GetComponent<Animator>().SetTrigger("WalkTrigger");
+            GetComponent<Animator>().SetBool("IsWalking", true);
         }
+        else
+        {
+            GetComponent<Animator>().SetBool("IsWalking", false);
+        }
+        /*else if(agent.velocity == Vector3.zero && !isAttacking)
+        {
+            GetComponent<Animator>().SetTrigger("IdleTrigger");
+        }*/
     }
 
     void RecalculatePath()
